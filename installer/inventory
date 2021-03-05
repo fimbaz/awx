@@ -6,7 +6,7 @@ localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env pyth
 # Otherwise the setup playbook will install the official Ansible images. Versions may
 # be selected based on: latest, 1, 1.0, 1.0.0, 1.0.0.123
 # by default the base will be used to search for ansible/awx
-dockerhub_base=ansible
+#dockerhub_base=ansible
 
 # Openshift Install
 # Will need to set -e openshift_password=developer -e docker_registry_password=$(oc whoami -t)
@@ -129,7 +129,6 @@ secret_key=awxsecret
 #http_proxy=http://proxy:3128
 #https_proxy=http://proxy:3128
 #no_proxy=mycorp.org
-
 # Container networking configuration
 # Set the awx_task and awx_web containers' search domain(s)
 #awx_container_search_domains=example.com,ansible.com
@@ -140,8 +139,8 @@ secret_key=awxsecret
 # it manages from the docker host, you can set this to turn it into a volume for the container.
 #project_data_dir=/var/lib/awx/projects
 
-# AWX custom virtual environment folder. Only usable for local install.
-#custom_venv_dir=/opt/my-envs/
+# AWX custom virtual environment folder.
+custom_venvs_path="/opt/custom-venvs"
 
 # CA Trust directory. If you need to provide custom CA certificates, supplying
 # this variable causes this directory on the host to be bind mounted over

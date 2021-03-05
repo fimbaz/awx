@@ -52,9 +52,6 @@ insights_url_base: "https://example.org"
 automation_analytics_url: "https://example.org"
 insights_agent_mime: "application/example"
 
-custom_venvs_path: "/opt/custom-venvs"
-custom_venvs_python: "python2"
-
 ca_trust_bundle: "/etc/pki/tls/certs/ca-bundle.crt"
 
 container_groups_image: "ansible/ansible-runner"

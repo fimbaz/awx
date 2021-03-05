@@ -19,6 +19,7 @@
   block:
     - name: Tag and push awx image to registry
       docker_image:
+        source: local
         name: "{{ awx_image }}"
         repository: "{{ docker_registry }}/{{ docker_registry_repository }}/{{ awx_image }}"
         tag: "{{ item }}"

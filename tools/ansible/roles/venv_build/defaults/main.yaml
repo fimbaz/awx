@@ -1,0 +1,7 @@
+custom_venvs_path: "/opt/custom-venvs"
+custom_venvs_python: "python2"
+dockerfile_name: "Dockerfile"
+dockerfile_dest: "{{custom_venv.name}}"
+custom_venv: "{{custom_venvs[0]}}" #TODO  support for multiple venvs
+trusted_hosts: ""
+venv_image: "{{ custom_venv.name }}-venv"

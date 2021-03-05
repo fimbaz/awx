@@ -1,0 +1,17 @@
+# Calling Docker directly because docker-py doesnt support BuildKit
+- name: Create build directory
+  file:
+    path: "venvs/{{ venv_image }}/Dockerfile"
+    state: directory
+
+- name: Render Dockerfile
+  template:
+    src: "Dockerfile.j2"
+    dest: "venvs/{{ venv_image }}/Dockerfile"
+    
+- name: Build custom virtualenv
+  command: docker build -t "{{ docker_registry }}/{{ docker_registry_repository }}/{{venv_image}}:latest"  venvs/{{ custom_venv.name }}/
+
+- name: Tag and Push Container Images
+  command: docker push "{{ docker_registry }}/{{ docker_registry_repository }}/{{venv_image}}:latest"
+  

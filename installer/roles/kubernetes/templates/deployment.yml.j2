@@ -122,44 +122,6 @@ spec:
       initContainers:
         - image: 'centos:7'
           name: init-custom-venvs
-{% if http_proxy is defined or https_proxy is defined %}
-{% set trusted_hosts = "--trusted-host pypi.org --trusted-host files.pythonhosted.org --trusted-host pypi.python.org" %}
-          env:
-{% if http_proxy is defined %}
-            - name: http_proxy
-              value: {{ http_proxy }}
-{% endif %}
-{% if https_proxy is defined %}
-            - name: https_proxy
-              value: {{ https_proxy }}
-{% endif %}
-{% if no_proxy is defined %}
-            - name: no_proxy
-              value: {{ no_proxy }}
-{% endif %}
-{% endif %}
-          command:
-            - sh
-            - '-c'
-            - >-
-              yum install -y ansible curl python-setuptools epel-release \
-                openssl openssl-devel gcc python-devel &&
-              yum install -y python-virtualenv python36 python36-devel &&
-              mkdir -p {{ custom_venvs_path }} &&
-{% for custom_venv in custom_venvs %}
-              virtualenv -p {{ custom_venv.python | default(custom_venvs_python) }} \
-                {{ custom_venvs_path }}/{{ custom_venv.name }} &&
-              source {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/activate &&
-              {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U pip &&
-              {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U psutil  \
-                "ansible=={{ custom_venv.python_ansible_version }}" &&
-{% if custom_venv.python_modules is defined %}
-              {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U \
-                {% for module in custom_venv.python_modules %}{{ module }} {% endfor %} &&
-{% endif %}
-              deactivate &&
-{% endfor %}
-              :
           volumeMounts:
             - name: custom-venvs
               mountPath: {{ custom_venvs_path }}

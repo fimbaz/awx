@@ -1,0 +1,34 @@
+### This file is generated from
+### tools/ansible/roles/dockerfile/templates/Dockerfile.j2
+###
+### DO NOT EDIT
+###
+
+# Build container
+FROM centos:7
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+USER root
+
+# Install build dependencies
+RUN yum install -y ansible curl python-setuptools epel-release \
+    openssl openssl-devel gcc python devel
+RUN yum install -y python3-virtualenv python36 python36-devel
+RUN mkdir -p {{ custom_venvs_path }}/{{custom_venv.name}}
+RUN python3 -m venv --copies {{ custom_venv.python | default(custom_venvs_python) }} {{ custom_venvs_path }}/{{ custom_venv.name }}
+
+ENV VIRTUAL_ENV={{ custom_venvs_path }}/{{ custom_venv.name }}
+ENV OLD_PYTHONPATH=$PYTHONPATH
+ENV OLD_PATH=$PATH
+ENV PYTHONPATH=$PYTHONPATH:{{ custom_venvs_path }}/{{ custom_venv.name }}/lib/python3.6/
+ENV PATH=$VIRTUAL_ENV/bin/:$PATH
+RUN {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U pip
+RUN {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U psutil
+RUN {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U ansible-base=={{ custom_venv.python_ansible_version }}
+RUN {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U ansible=={{ custom_venv.python_ansible_version }}
+
+RUN {{ custom_venvs_path }}/{{ custom_venv.name }}/bin/pip install {{ trusted_hosts }} -U {% for module in custom_venv.python_modules %}{{ module }} {% endfor %}
+
