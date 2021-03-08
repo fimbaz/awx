@@ -180,6 +180,11 @@ spec:
               subPath: nginx.conf
               readOnly: true
 
+            - name: {{ kubernetes_deployment_name }}-receptor-server-config
+              mountPath: /etc/receptor/receptor.conf
+              subPath: receptor.conf
+              readOnly: true
+
             - name: "{{ kubernetes_deployment_name }}-application-credentials"
               mountPath: "/etc/tower/conf.d/"
               readOnly: true
@@ -248,14 +253,15 @@ spec:
             - name: custom-venvs
               mountPath: {{ custom_venvs_path }}
 {% endif %}
-            - name: {{ kubernetes_deployment_name }}-application-config
-              mountPath: "/etc/tower/settings.py"
-              subPath: settings.py
-              readOnly: true
-
             - name: "{{ kubernetes_deployment_name }}-application-credentials"
               mountPath: "/etc/tower/conf.d/"
               readOnly: true
+
+            - name: {{ kubernetes_deployment_name }}-receptor-worker-config
+              mountPath: /etc/receptor/receptor.conf
+              subPath: receptor.conf
+              readOnly: true
+
 
             - name: {{ kubernetes_deployment_name }}-supervisor-web-config
               mountPath: "/etc/supervisord.conf"
@@ -274,6 +280,12 @@ spec:
 
             - name: {{ kubernetes_deployment_name }}-redis-socket
               mountPath: "/var/run/redis"
+
+            - name: {{ kubernetes_deployment_name }}-application-config
+              mountPath: "/etc/tower/settings.py"
+              subPath: settings.py
+              readOnly: true
+
           env:
             - name: SUPERVISOR_WEB_CONFIG_PATH
               value: "/etc/supervisord.conf"
@@ -401,6 +413,20 @@ spec:
             items:
               - key: {{ kubernetes_deployment_name }}_redis_conf
                 path: redis.conf
+
+        - name: {{ kubernetes_deployment_name }}-receptor-worker-config
+          configMap:
+            name: {{ kubernetes_deployment_name }}-config
+            items:
+              - key: {{ kubernetes_deployment_name }}_receptor_worker_conf
+                path: receptor.conf
+
+        - name: {{ kubernetes_deployment_name }}-receptor-server-config
+          configMap:
+            name: {{ kubernetes_deployment_name }}-config
+            items:
+              - key: {{ kubernetes_deployment_name }}_receptor_server_conf
+                path: receptor.conf
 
         - name: "{{ kubernetes_deployment_name }}-application-credentials"
           secret:
