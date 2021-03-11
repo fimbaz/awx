@@ -205,7 +205,7 @@ data:
     port 0
     bind 127.0.0.1
 
-  {{ kubernetes_deployment_name }}_receptor_server_conf: |
+  {{ kubernetes_deployment_name }}_receptor_worker_conf: |
      ---
      - log-level: debug
 
@@ -217,7 +217,7 @@ data:
          port: 2200
 
      - tcp-peer:
-         address: awx-3:2200
+         address: awx-task:2200
 
      - work-command:
          worktype: worker
@@ -230,32 +230,32 @@ data:
          image: quay.io/shanemcd/ee
          authmethod: kubeconfig
 
-  {{ kubernetes_deployment_name }}_receptor_worker_conf: |
+  {{ kubernetes_deployment_name }}_receptor_server_conf: |
     ---
     - log-level: debug
 
     - control-service:
-	service: control
-	filename: /var/run/receptor/receptor.sock
+        service: control
+        filename: /var/run/receptor/receptor.sock
 
     - local-only:
 
     - work-command:
-	worktype: local
-	command: ansible-runner
-	params: worker
-	allowruntimeparams: true
+        worktype: local
+        command: ansible-runner
+        params: worker
+        allowruntimeparams: true
 
     - work-kubernetes:
-	worktype: kubernetes-runtime-auth
-	authmethod: runtime
-	allowruntimeauth: true
-	allowruntimepod: true
-	allowruntimeparams: true
+        worktype: kubernetes-runtime-auth
+        authmethod: runtime
+        allowruntimeauth: true
+        allowruntimepod: true
+        allowruntimeparams: true
 
     - work-kubernetes:
-	worktype: kubernetes-incluster-auth
-	authmethod: incluster
-	allowruntimeauth: true
-	allowruntimepod: true
-	allowruntimeparams: true
+        worktype: kubernetes-incluster-auth
+        authmethod: incluster
+        allowruntimeauth: true
+        allowruntimepod: true
+        allowruntimeparams: true
